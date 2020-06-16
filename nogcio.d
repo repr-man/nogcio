@@ -37,24 +37,28 @@ private void printInternal(string s) @nogc
     fprintf(stdout, "%s", s.ptr);
 }
 
+//Char support
 pragma(inline, true)
 private void printInternal(char c) @nogc
 {
     fprintf(stdout, "%c", c);
 }
 
+//Wchar support
 pragma(inline, true)
 private void printInternal(wchar c) @nogc
 {
     printInternal(cast(char) c);
 }
 
+//Dchar support
 pragma(inline, true)
 private void printInternal(dchar c) @nogc
 {
     printInternal(cast(char) c);
 }
 
+//Bool support
 pragma(inline, true)
 private void printInternal(bool b) @nogc
 {
@@ -64,18 +68,21 @@ private void printInternal(bool b) @nogc
         fprintf(stdout, "false");
 }
 
+//Int support
 pragma(inline, true)
 private void printInternal(int i) @nogc
 {
     fprintf(stdout, "%d", i);
 }
 
+//Float/Double support
 pragma(inline, true)
 private void printInternal(double d) @nogc
 {
     fprintf(stdout, "%f", d);
 }
 
+//Pointer support
 pragma(inline, true)
 private void printInternal(void* p) @nogc
 {
@@ -115,24 +122,28 @@ private void wprintInternal(dstring s) @nogc
     fwprintf(stdout, "%ls", s.ptr);
 }
 
+//Dchar support
 pragma(inline, true)
 private void wprintInternal(dchar c) @nogc
 {
     fwprintf(stdout, "%c", c);
 }
 
+//Char support
 pragma(inline, true)
 private void wprintInternal(char c) @nogc
 {
     wprintInternal(cast(dchar) c);
 }
 
+//Wchar support
 pragma(inline, true)
 private void wprintInternal(wchar c) @nogc
 {
     wprintInternal(cast(dchar) c);
 }
 
+//Bool support
 pragma(inline, true)
 private void wprintInternal(bool b) @nogc
 {
@@ -142,18 +153,21 @@ private void wprintInternal(bool b) @nogc
         fwprintf(stdout, "false");
 }
 
+//Int support
 pragma(inline, true)
 private void wprintInternal(int i) @nogc
 {
     fwprintf(stdout, "%d", i);
 }
 
+//Float/Double support
 pragma(inline, true)
 private void wprintInternal(double d) @nogc
 {
     fwprintf(stdout, "%f", d);
 }
 
+//Pointer support
 pragma(inline, true)
 private void wprintInternal(void* p) @nogc
 {
