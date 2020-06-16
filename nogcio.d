@@ -7,6 +7,8 @@ import core.stdc.stdio : stdout, fprintf;
 //  MAKE SURE TO SET YOUR LOCALE!  IT WILL SCREW UP OTHERWISE!
 //  setlocale(LC_CTYPE, "");    generally works.
 //
+//  Is it idiomatic?  Probably not.
+//  Does it work?  As far as I know.
 
 //Implements the basic printing functionality
 void print(T...)(T input) @nogc
