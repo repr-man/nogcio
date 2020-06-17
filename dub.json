@@ -1,0 +1,5 @@
+{
+	"name": "nogcio",
+	"description": "Provides basic writeln-like functionality without the GC.",
+	"license": "BSD 3-clause"
+}
