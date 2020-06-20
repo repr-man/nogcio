@@ -1,14 +1,12 @@
 module nogcio;
 
 import core.stdc.wchar_ : fwprintf;
-import core.stdc.stdio : stdout, fprintf;
+import core.stdc.stdio; // : stdout, fprintf;
 
 //
 //  MAKE SURE TO SET YOUR LOCALE!  IT WILL SCREW UP OTHERWISE!
 //  setlocale(LC_CTYPE, "");    generally works.
 //
-//  Is it idiomatic?  Probably not.
-//  Does it work?  As far as I know.
 
 //Implements the basic printing functionality
 void print(T...)(T input) @nogc
@@ -18,10 +16,25 @@ void print(T...)(T input) @nogc
     foreach (x; input)
     {
         if(!first)
-            printInternal(" ");
+            printInternal(stdout, " ");
         else
             first = false;
-        printInternal(x);
+        printInternal(stdout, x);
+    }
+}
+
+//Just like "print", but prints to the specified file
+void fprint(T...)(FILE* file, T input)
+{
+    //The loop prints each argument, separating them with a space
+    bool first = true;
+    foreach (x; input)
+    {
+        if(!first)
+            printInternal(file, " ");
+        else
+            first = false;
+        printInternal(file, x);
     }
 }
 
@@ -29,66 +42,73 @@ void print(T...)(T input) @nogc
 void println(T...)(T input) @nogc
 {
     pragma(inline, true) print(input);
-    printInternal("\n");
+    printInternal(stdout, "\n");
 }
 
-//Wrapper for printing to stdout
-pragma(inline, true)
-private void printInternal(string s) @nogc
+//Just like "println", but prints to the specified file
+void fprintln(T...)(FILE* file, T input) @nogc
 {
-    fprintf(stdout, "%s", s.ptr);
+    pragma(inline, true) fprint(file, input);
+    printInternal(file, "\n");
+}
+
+//Wrapper for printing to a file
+pragma(inline, true)
+private void printInternal(FILE* file, string s) @nogc
+{
+    fprintf(file, "%s", s.ptr);
 }
 
 //Char support
 pragma(inline, true)
-private void printInternal(char c) @nogc
+private void printInternal(FILE* file, char c) @nogc
 {
-    fprintf(stdout, "%c", c);
+    fprintf(file, "%c", c);
 }
 
 //Wchar support
 pragma(inline, true)
-private void printInternal(wchar c) @nogc
+private void printInternal(FILE* file, wchar c) @nogc
 {
-    printInternal(cast(char) c);
+    printInternal(file, cast(char) c);
 }
 
 //Dchar support
 pragma(inline, true)
-private void printInternal(dchar c) @nogc
+private void printInternal(FILE* file, dchar c) @nogc
 {
-    printInternal(cast(char) c);
+    printInternal(file, cast(char) c);
 }
 
 //Bool support
 pragma(inline, true)
-private void printInternal(bool b) @nogc
+private void printInternal(FILE* file, bool b) @nogc
 {
     if(b)
-        fprintf(stdout, "true");
+        fprintf(file, "true");
     else
-        fprintf(stdout, "false");
+        fprintf(file, "false");
 }
 
 //Int support
 pragma(inline, true)
-private void printInternal(int i) @nogc
+private void printInternal(FILE* file, int i) @nogc
 {
-    fprintf(stdout, "%d", i);
+    fprintf(file, "%d", i);
 }
 
 //Float/Double support
 pragma(inline, true)
-private void printInternal(double d) @nogc
+private void printInternal(FILE* file, double d) @nogc
 {
-    fprintf(stdout, "%f", d);
+    fprintf(file, "%f", d);
 }
 
 //Pointer support
 pragma(inline, true)
-private void printInternal(void* p) @nogc
+private void printInternal(FILE* file, void* p) @nogc
 {
-    fprintf(stdout, "%p", p);
+    fprintf(file, "%p", p);
 }
 
 
@@ -103,10 +123,25 @@ void wprint(T...)(T input) @nogc
     foreach (x; input)
     {
         if(!first)
-            wprintInternal(" ");
+            wprintInternal(stdout, " ");
         else
             first = false;
-        wprintInternal(x);
+        wprintInternal(stdout, x);
+    }
+}
+
+//Just like "wprint", but prints to the specified file
+void fwprint(T...)(FILE* file, T input)
+{
+    //The loop prints each argument, separating them with a space
+    bool first = true;
+    foreach (x; input)
+    {
+        if(!first)
+            wprintInternal(file, " ");
+        else
+            first = false;
+        wprintInternal(file, x);
     }
 }
 
@@ -114,64 +149,71 @@ void wprint(T...)(T input) @nogc
 void wprintln(T...)(T input) @nogc
 {
     pragma(inline, true) wprint(input);
-    wprintInternal("\n");
+    wprintInternal(stdout, "\n");
 }
 
-//Wrapper for printing to stdout
-pragma(inline, true)
-private void wprintInternal(dstring s) @nogc
+//Just like "wprintln", but prints to the specified file
+void fwprintln(T...)(FILE* file, T input) @nogc
 {
-    fwprintf(stdout, "%ls", s.ptr);
+    pragma(inline, true) fwprint(file, input);
+    wprintInternal(file, "\n");
+}
+
+//Wrapper for printing to a file
+pragma(inline, true)
+private void wprintInternal(FILE* file, dstring s) @nogc
+{
+    fwprintf(file, "%ls", s.ptr);
 }
 
 //Dchar support
 pragma(inline, true)
-private void wprintInternal(dchar c) @nogc
+private void wprintInternal(FILE* file, dchar c) @nogc
 {
-    fwprintf(stdout, "%c", c);
+    fwprintf(file, "%c", c);
 }
 
 //Char support
 pragma(inline, true)
-private void wprintInternal(char c) @nogc
+private void wprintInternal(FILE* file, char c) @nogc
 {
-    wprintInternal(cast(dchar) c);
+    wprintInternal(file, cast(dchar) c);
 }
 
 //Wchar support
 pragma(inline, true)
-private void wprintInternal(wchar c) @nogc
+private void wprintInternal(FILE* file, wchar c) @nogc
 {
-    wprintInternal(cast(dchar) c);
+    wprintInternal(file, cast(dchar) c);
 }
 
 //Bool support
 pragma(inline, true)
-private void wprintInternal(bool b) @nogc
+private void wprintInternal(FILE* file, bool b) @nogc
 {
     if(b)
-        fwprintf(stdout, "true");
+        fwprintf(file, "true");
     else
-        fwprintf(stdout, "false");
+        fwprintf(file, "false");
 }
 
 //Int support
 pragma(inline, true)
-private void wprintInternal(int i) @nogc
+private void wprintInternal(FILE* file, int i) @nogc
 {
-    fwprintf(stdout, "%d", i);
+    fwprintf(file, "%d", i);
 }
 
 //Float/Double support
 pragma(inline, true)
-private void wprintInternal(double d) @nogc
+private void wprintInternal(FILE* file, double d) @nogc
 {
-    fwprintf(stdout, "%f", d);
+    fwprintf(file, "%f", d);
 }
 
 //Pointer support
 pragma(inline, true)
-private void wprintInternal(void* p) @nogc
+private void wprintInternal(FILE* file, void* p) @nogc
 {
-    fwprintf(stdout, "%p", p);
+    fwprintf(file, "%p", p);
 }
